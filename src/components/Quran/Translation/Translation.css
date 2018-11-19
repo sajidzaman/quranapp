@@ -1,0 +1,25 @@
+.Translation.heading {
+  direction: rtl;
+  font-family: "Scheherazade";
+}
+.Translation .ayah.ur,
+.Translation .ayah.ar,
+.Translation .ayah.dv,
+.Translation .ayah.fa,
+.Translation .ayah.ug {
+  font-family: "Lateef";
+  font-size: 35px;
+  direction: rtl;
+  border: 1px solid #e2e2e2;
+  padding: 15px 20px;
+  text-align: right;
+}
+
+.Translation .ayah {
+  font-family: "Lucidia Console";
+  font-size: 35px;
+  border: 1px solid #e2e2e2;
+  padding: 15px 20px;
+  color: lightskyblue;
+  text-align: left;
+}
