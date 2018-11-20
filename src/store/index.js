@@ -3,12 +3,14 @@ import ChapterReducer from "./reducers/ChapterReducer";
 import EditionReducer from "./reducers/EditionReducer";
 import SurahReducer from "./reducers/SurahReducer";
 import TranslationReducer from "./reducers/TranslationReducer";
+import ReciterReducer from "./reducers/ReciterReducer";
 
 const rootReducer = combineReducers({
   chapter: ChapterReducer,
   edition: EditionReducer,
   surah: SurahReducer,
-  translation: TranslationReducer
+  translation: TranslationReducer,
+  audio: ReciterReducer
 });
 const store = createStore(rootReducer);
 
