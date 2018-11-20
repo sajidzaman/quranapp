@@ -27,7 +27,7 @@ class TextEditions extends Component {
     if (!this.state.editions)
       return <ReactLoading color="green" type="spinningBubbles" />;
     return (
-      <div>
+      <div className="editions">
         <h5>Editions</h5>
         <select
           className="custom-select"

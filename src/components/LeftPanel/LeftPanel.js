@@ -5,17 +5,31 @@ import Verse from "./Verse/Verse";
 import Reciter from "./Reciter/Reciter";
 import TextEditions from "./Editions/Text/TextEditions";
 import Translations from "./Editions/Translations/Translations";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import "react-tabs/style/react-tabs.css";
+import "./LeftPanel.css";
 
 class LeftPanel extends Component {
   render() {
     return (
-      <div className="m-2 p-3">
+      <div className="m-2 p-3 LeftPanel">
         <h3> Quran </h3>
         <TextEditions />
-        <Surah />
-        <Translations />
-        <Verse />
-        <Chapter />
+        <Tabs className="tabPanel">
+          <TabList>
+            <Tab> By Surah</Tab>
+            <Tab> By Chapter</Tab>
+          </TabList>
+          <TabPanel>
+            <Surah />
+            <Translations />
+            <Verse />
+          </TabPanel>
+          <TabPanel>
+            <Chapter />
+            <Verse />
+          </TabPanel>
+        </Tabs>
         <Reciter />
       </div>
     );

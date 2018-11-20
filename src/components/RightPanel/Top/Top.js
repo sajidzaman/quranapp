@@ -24,6 +24,12 @@ class Top extends Component {
       fontFamily: "Lateef",
       fontSize: 65,
       color: "green"
+    },
+    bismillah: {
+      direction: "rtl",
+      fontFamily: "Lateef",
+      fontSize: 55,
+      color: "green"
     }
   };
   fetchSurah(nextProps) {
@@ -57,6 +63,9 @@ class Top extends Component {
         </div>
 
         <div className="col-md-4">
+          <h3 className="text-center" style={this.styles.bismillah}>
+            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+          </h3>
           <h4 className="text-center">
             {this.state.surah.number} - {this.state.surah.revelationType} -{" "}
             {this.state.surah.numberOfAyahs}

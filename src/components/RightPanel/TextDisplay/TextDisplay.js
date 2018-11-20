@@ -67,14 +67,25 @@ class TextDisplay extends Component {
   fetchSurah(nextProps) {
     let edition = this.props.edition.edition;
     let surah = this.props.surah.surah;
+    let verseRange = this.props.verseRange.verseRange;
 
     if (nextProps) {
       surah = nextProps.surah.surah;
       edition = nextProps.edition.edition;
+      verseRange = nextProps.verseRange.verseRange;
     }
 
     let urlForTranslation =
       "http://api.alquran.cloud/surah/" + surah + "/" + edition;
+
+    console.log("verseRange", verseRange);
+
+    if (verseRange[0] !== 0 && verseRange[1] !== 0) {
+      let offset = "?offset=".concat(verseRange[0] - 1);
+      let limit = "&limit=".concat(verseRange[1] - (verseRange[0] - 1));
+      urlForTranslation = urlForTranslation.concat([offset + limit]);
+    }
+    console.log(urlForTranslation);
 
     fetch(urlForTranslation)
       .then(response => response.json())
@@ -97,7 +108,11 @@ class TextDisplay extends Component {
         {this.state.surah.ayahs.map(ayah => {
           return (
             <div key={"versecontainer_".concat(ayah.number)}>
-              <Verse ayah={ayah} key={"verse_".concat(ayah.number)} />
+              <Verse
+                ayah={ayah}
+                key={"verse_".concat(ayah.number)}
+                surah={this.state.surah.number}
+              />
               {this.props.translation.translation !== null &&
               this.state.translation ? (
                 <Translation
@@ -122,7 +137,8 @@ const mapStateToProps = state => {
     surah: state.surah,
     edition: state.edition,
     chapter: state.chapter,
-    translation: state.translation
+    translation: state.translation,
+    verseRange: state.verseRange
   };
 };
 export default connect(mapStateToProps)(TextDisplay);

@@ -18,18 +18,34 @@ class Player extends Component {
   }
   fetchAudios(nextProps) {
     let audio = this.props.audio.audio,
-      surah = this.props.surah.surah;
+      surah = this.props.surah.surah,
+      verseRange = this.props.verseRange.verseRange;
     if (nextProps) {
       audio = nextProps.audio.audio;
       surah = nextProps.surah.surah;
+      verseRange = nextProps.verseRange.verseRange;
     }
-    fetch("http://api.alquran.cloud/surah/" + surah + "/" + audio)
+
+    let urlForAudio = "http://api.alquran.cloud/surah/" + surah + "/" + audio;
+
+    if (verseRange[0] !== 0 && verseRange[1] !== 0) {
+      let offset = "?offset=".concat(verseRange[0] - 1);
+      let limit = "&limit=".concat(verseRange[1] - (verseRange[0] - 1));
+      urlForAudio = urlForAudio.concat([offset + limit]);
+    }
+
+    fetch(urlForAudio)
       .then(response => response.json())
       .then(parsedJSON => {
         const audios = parsedJSON.data.ayahs.map(ayah => {
           return {
             url: ayah.audio,
-            title: parsedJSON.data.name + "Ayah " + ayah.numberInSurah
+            title:
+              parsedJSON.data.englishName +
+              " [ Ayah " +
+              ayah.numberInSurah +
+              "]",
+            ayah: ayah.numberInSurah
           };
         });
         console.log(audios);
@@ -47,21 +63,30 @@ class Player extends Component {
 
   onMediaChangeHandler = info => {
     console.log(info);
-  }
+  };
 
   render() {
     if (!this.state.audioFiles)
       return <ReactLoading type="bubbles" color="black" />;
-    return <div>
-        <AudioPlayer playlist={this.state.audioFiles} controls={["playpause", "forwardskip", "progressdisplay"]} autoplay={true} autoplayDelayInSeconds={2.1} onMediaEvent={{play : this.onMediaChangeHandler}} />
-      </div>;
+    return (
+      <div>
+        <AudioPlayer
+          playlist={this.state.audioFiles}
+          controls={["playpause", "forwardskip", "progressdisplay"]}
+          autoplay={false}
+          autoplayDelayInSeconds={2.1}
+          getDisplayText={this.onMediaChangeHandler}
+        />
+      </div>
+    );
   }
 }
 
 const mapStatesToProps = state => {
   return {
     surah: state.surah,
-    audio: state.audio
+    audio: state.audio,
+    verseRange: state.verseRange
   };
 };
 

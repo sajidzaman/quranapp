@@ -8,7 +8,7 @@ const SurahReducer = (state = initialState, action) => {
   switch (action.type) {
     case "SURAH":
       return {
-        surah: action.surah
+        surah: action.surah       
       };
 
     default:
