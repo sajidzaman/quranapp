@@ -9,7 +9,7 @@ class Translation extends Component {
         <div
           key={this.props.ayah.number}
           className={"ayah " + this.props.language}
-          id={"ayah_".concat(this.props.ayah.numberInSurah)}
+          id={"trans_ayah_".concat(this.props.ayah.number)}
         >
           {this.props.ayah.text}
         </div>

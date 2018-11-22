@@ -21,8 +21,8 @@ class Surah extends Component {
       type: "SELECTEDSURAH",
       selectedSurah: selectedSurah
     });
-    //console.log("selectedSurah", selectedSurah);
-    this.props.dispatch({ type: "SURAH", surah: event.value });
+    console.log("selectedSurah", selectedSurah);
+    this.props.dispatch({ type: "SURAH", surah: selectedSurah.value });
     this.props.dispatch({ type: "AYAHRANGE", verseRange: [0, 0] });
   };
   render() {
@@ -50,7 +50,9 @@ class Surah extends Component {
 const mapStatesToProps = state => {
   return {
     surahList: state.surahList,
-    surah: state.surah
+    surah: state.surah,
+    selectedSurah: state.selectedSurah,
+    verseRange: state.verseRange
   };
 };
 export default connect(mapStatesToProps)(Surah);

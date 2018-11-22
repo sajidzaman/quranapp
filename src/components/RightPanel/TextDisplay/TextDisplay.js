@@ -24,8 +24,18 @@ class TextDisplay extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    // console.log(this.props !== nextProps);
+    console.log(this.props, nextProps);
     if (this.props !== nextProps) {
+      if (this.props.edition.edition !== nextProps.edition.edition) {
+        this.fetchSurah(nextProps);
+      }
+      if (this.props.surah.surah !== nextProps.surah.surah) {
+        this.setState({
+          surah: null
+        });
+        this.fetchSurah(nextProps);
+        this.fetchTranslation(nextProps);
+      }
       if (
         this.props.translation.translation !== nextProps.translation.translation
       ) {
@@ -34,37 +44,79 @@ class TextDisplay extends Component {
         });
         this.fetchTranslation(nextProps);
       }
-
-      if (this.props.surah.surah !== nextProps.surah.surah) {
-        this.setState({
-          surah: null
-        });
+      if (
+        this.props.verseRange.verseRange !== nextProps.verseRange.verseRange
+      ) {
         this.fetchSurah(nextProps);
+        this.fetchTranslation(nextProps);
       }
     }
-    if (nextProps.highlight.highlight > this.props.highlight.highlight) {
-      let currentScroll = this._scrollBar.getScrollValues();
+
+    if (this._scrollBar !== null) {
       console.log(this._scrollBar.getScrollValues());
-      this._scrollBar.scrollTo(currentScroll.scrollTop + 120);
+
+      if (nextProps.highlight.highlight > this.props.highlight.highlight) {
+        console.log(this._scrollBar.getScrollValues());
+
+        let scrollValue = this._scrollBar.getScrollValues().scrollTop;
+
+        const ayahDiv = document.getElementById(
+          "ayah_".concat(this.props.highlight.highlight)
+        );
+        const transDiv = document.getElementById(
+          "trans_ayah_".concat(this.props.highlight.highlight)
+        );
+
+        const ayahDivHeight = ayahDiv !== null ? ayahDiv.offsetHeight : 0;
+        const transDivHeight = transDiv !== null ? transDiv.offsetHeight : 0;
+
+        scrollValue += ayahDivHeight + transDivHeight;
+        console.log(ayahDivHeight, transDivHeight, scrollValue);
+
+        this._scrollBar.scrollTo(scrollValue);
+      }
+      if (nextProps.highlight.highlight < this.props.highlight.highlight) {
+        console.log("here");
+        this._scrollBar.scrollTo(0);
+      }
     }
   }
 
+  //TODO: fetch Translation again on verse Range selection
   fetchTranslation(nextProps) {
-    if (
-      nextProps &&
-      nextProps.translation.translation === null &&
-      this.props.translation.translation === null
-    )
-      return null;
+    console.log("nextProps in fetchTranslation", nextProps);
+    console.log("props in fetchTranslation", this.props);
+    if (nextProps) {
+      if (
+        nextProps.translation.translation === null ||
+        nextProps.translation.translation === "null"
+      )
+        this.props.dispatch({ type: "TRANSLATION", translation: null });
+    } else {
+      if (this.props.translation.translation === null) return null;
+    }
+
     let surah = this.props.surah.surah;
     let translation = this.props.translation.translation;
+    let verseRange = this.props.verseRange.verseRange;
     if (nextProps) {
       surah = nextProps.surah.surah;
       translation = nextProps.translation.translation;
+      verseRange = nextProps.verseRange.verseRange;
     }
 
     let urlForTranslation =
       "http://api.alquran.cloud/surah/" + surah + "/" + translation;
+
+    console.log("verseRange in text Display", verseRange);
+
+    if (verseRange[0] !== 0 && verseRange[1] !== 0) {
+      let offset = "?offset=".concat(verseRange[0] - 1);
+      let limit = "&limit=".concat(verseRange[1] - (verseRange[0] - 1));
+      urlForTranslation = urlForTranslation.concat([offset + limit]);
+    }
+
+    console.log("urlForTranslation for translation", urlForTranslation);
 
     fetch(urlForTranslation)
       .then(response => response.json())
@@ -91,14 +143,14 @@ class TextDisplay extends Component {
     let urlForTranslation =
       "http://api.alquran.cloud/surah/" + surah + "/" + edition;
 
-    console.log("verseRange", verseRange);
+    console.log("verseRange in Surah", verseRange);
 
     if (verseRange[0] !== 0 && verseRange[1] !== 0) {
       let offset = "?offset=".concat(verseRange[0] - 1);
       let limit = "&limit=".concat(verseRange[1] - (verseRange[0] - 1));
       urlForTranslation = urlForTranslation.concat([offset + limit]);
     }
-    console.log(urlForTranslation);
+    //console.log(urlForTranslation);
 
     fetch(urlForTranslation)
       .then(response => response.json())
@@ -125,11 +177,12 @@ class TextDisplay extends Component {
         style={this.styles.mainDiv}
         rtl={true}
         noScrollX={true}
+        scrollTop={0}
         ref={scrollBar => {
           this._scrollBar = scrollBar;
         }}
       >
-        {this.state.surah.ayahs.map(ayah => {
+        {this.state.surah.ayahs.map((ayah, index) => {
           return (
             <div key={"versecontainer_".concat(ayah.number)}>
               <Verse
@@ -137,10 +190,9 @@ class TextDisplay extends Component {
                 key={"verse_".concat(ayah.number)}
                 surah={this.state.surah.number}
               />
-              {this.props.translation.translation !== null &&
-              this.state.translation ? (
+              {this.state.translation ? (
                 <Translation
-                  ayah={this.state.translation.ayahs[ayah.numberInSurah - 1]}
+                  ayah={this.state.translation.ayahs[index]}
                   language={this.state.translation.edition.language}
                   key={"trans_".concat(ayah.number)}
                 />

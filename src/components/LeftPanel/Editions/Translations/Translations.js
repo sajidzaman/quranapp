@@ -11,7 +11,7 @@ class Translations extends Component {
   }
 
   onTranslationChangeHandler = event => {
-    //console.log("eventfor translationchange", event);
+    console.log("eventfor translationchange", event);
     this.props.dispatch({
       type: "TRANSLATION",
       translation: event.value === "0" ? null : event.value
