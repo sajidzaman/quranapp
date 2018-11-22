@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import ReactLoading from "react-loading";
 import { connect } from "react-redux";
-import groupBy from "lodash/groupBy";
-//import uniqBy from "lodash/uniqBy";
-import toArray from "lodash/toArray";
-import ISO6391 from "iso-639-1";
 import Select from "react-select";
 import "./Translations.css";
 
@@ -14,61 +10,31 @@ class Translations extends Component {
     this.state = {};
   }
 
-  componentDidMount() {
-    this.fetchTranslations();
-  }
-
   onTranslationChangeHandler = event => {
-    console.log(event.value);
+    //console.log("eventfor translationchange", event);
     this.props.dispatch({
       type: "TRANSLATION",
       translation: event.value === "0" ? null : event.value
     });
   };
 
-  fetchTranslations() {
-    fetch("http://api.alquran.cloud/edition?format=text&type=translation")
-      .then(response => response.json())
-      .then(parsedJSON => {
-        const translations = groupBy(parsedJSON.data, translation => {
-          return translation.language;
-        });
-
-        const languageKeys = Object.keys(translations);
-
-        const translationOptions = languageKeys.map(language => {
-          let langTranslations = translations[language];
-          return {
-            label: ISO6391.getNativeName(language),            
-            options: langTranslations.map(translation => {
-              return {
-                value: translation.identifier,
-                label: translation.name,
-                group: ISO6391.getNativeName(language)                
-              };
-            })
-          };
-        });
-
-        console.log("translations", toArray(translations));
-        this.setState({
-          translations: translationOptions
-        });
-      });
-  }
-
   customStyles = {
     option: (provided, state) => {
-      const rtlText = (state.value.indexOf("ar.") !== -1 || state.value.indexOf("ug.") !== -1 || state.value.indexOf("ur.") !== -1 || state.value.indexOf("fa.") !== -1);
+      const rtlText =
+        state.value.indexOf("ar.") !== -1 ||
+        state.value.indexOf("ug.") !== -1 ||
+        state.value.indexOf("ur.") !== -1 ||
+        state.value.indexOf("fa.") !== -1;
       return {
-      ...provided,
-      borderBottom: "1px dotted pink",      
-      padding: 20,
-      color: state.value,
-      fontFamily: rtlText ? "Lateef" : "inherit" ,
-      fontSize: rtlText ? 25 : "inherit" ,
-      textAlign: rtlText ? "right" : "left"
-    }},
+        ...provided,
+        borderBottom: "1px dotted pink",
+        padding: 20,
+        color: state.value,
+        fontFamily: rtlText ? "Lateef" : "inherit",
+        fontSize: rtlText ? 25 : "inherit",
+        textAlign: rtlText ? "right" : "left"
+      };
+    },
     control: provided => ({
       // none of react-select's styles are passed to <Control />
       ...provided,
@@ -76,7 +42,7 @@ class Translations extends Component {
     }),
     groupHeading: provided => ({
       ...provided,
-      fontSize: 20,      
+      fontSize: 20,
       color: "green"
     }),
     singleValue: (provided, state) => {
@@ -88,22 +54,43 @@ class Translations extends Component {
   };
 
   render() {
-    if (!this.state.translations)
+    if (!this.props.translationList.translationList)
       return <ReactLoading color="green" type="spinningBubbles" />;
-    console.log("groupby language", this.state.languages);
+
+    if (this.props.translation.translation !== null) {
+      var selectedTranslation = this.props.translationList.translationList.find(
+        element =>
+          element.options.find(
+            translation =>
+              translation.value === this.props.translation.translation
+          )
+      );
+      selectedTranslation = selectedTranslation.options.filter(sub => {
+        return sub.value === this.props.translation.translation;
+      });
+      //console.log("selected element", selectedTranslation);
+    }
+
     return (
       <div className="Translations">
         <h5>Translations</h5>
         <Select
-        classNamePrefix="optiontext"
+          classNamePrefix="optiontext"
           onChange={this.onTranslationChangeHandler}
-          options={this.state.translations}
+          options={this.props.translationList.translationList}
           placeholder="select Translation"
-          styles={this.customStyles}          
+          styles={this.customStyles}
+          value={selectedTranslation}
         />
       </div>
     );
   }
 }
+const mapStatesToProps = state => {
+  return {
+    translationList: state.translationList,
+    translation: state.translation
+  };
+};
 
-export default connect()(Translations);
+export default connect(mapStatesToProps)(Translations);

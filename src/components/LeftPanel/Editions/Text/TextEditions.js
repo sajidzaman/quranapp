@@ -1,49 +1,39 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import ReactLoading from "react-loading";
+import Select from "react-select";
 
 class TextEditions extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-  componentDidMount() {
-    this.fetchTextEditions();
-  }
-  fetchTextEditions() {
-    fetch("http://api.alquran.cloud/edition?format=text&language=ar&type=quran")
-      .then(response => response.json())
-      .then(parsedJSON => {
-        this.setState({
-          editions: parsedJSON.data
-        });
-        //console.log(parsedJSON.data);
-      });
-  }
+
   onEditionChangeHandler = event => {
-    this.props.dispatch({ type: "EDITION", edition: event.target.value });
+    this.props.dispatch({ type: "EDITION", edition: event.value });
   };
   render() {
-    if (!this.state.editions)
+    if (!this.props.editionList.editionList)
       return <ReactLoading color="green" type="spinningBubbles" />;
     return (
       <div className="editions">
         <h5>Editions</h5>
-        <select
-          className="custom-select"
+        <Select
+          options={this.props.editionList.editionList}
           onChange={this.onEditionChangeHandler}
-        >
-          {this.state.editions.map(function(edition) {
-            return (
-              <option value={edition.identifier} key={edition.identifier}>
-                {edition.name}
-              </option>
-            );
-          })}
-        </select>
+          value={this.props.editionList.editionList.find(
+            element => element.value === this.props.edition.edition
+          )}
+        />
       </div>
     );
   }
 }
+const mapStatesToProps = state => {
+  return {
+    editionList: state.editionList,
+    edition: state.edition
+  };
+};
 
-export default connect()(TextEditions);
+export default connect(mapStatesToProps)(TextEditions);

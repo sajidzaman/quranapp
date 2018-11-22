@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import Select from "react-select";
 
 class Reciter extends Component {
   constructor(props) {
@@ -7,45 +8,26 @@ class Reciter extends Component {
     this.state = {};
   }
 
-  componentDidMount() {
-    this.fetchRecitations();
-  }
+  componentDidMount() {}
 
   onReciterChangeHandler = event => {
-    this.props.dispatch({ type: "AUDIO", audio: event.target.value });
+    this.props.dispatch({ type: "AUDIO", audio: event.value });
   };
 
-  fetchRecitations() {
-    fetch(
-      "http://api.alquran.cloud/edition?format=audio&type=versebyverse&language=ar"
-    )
-      .then(response => response.json())
-      .then(parsedJSON => {
-        this.setState({
-          audios: parsedJSON.data
-        });
-        //console.log(parsedJSON.data);
-      });
-  }
-
   render() {
-    if (!this.state.audios) return <p>Loading Audios list ...</p>;
+    if (!this.props.reciterList.reciterList)
+      return <p>Loading Audios list ...</p>;
+
     return (
       <div>
         <h5>Reciter</h5>
-        <select
-          className="custom-select"
+        <Select
+          options={this.props.reciterList.reciterList}
           onChange={this.onReciterChangeHandler}
-          value={this.props.audio.audio}
-        >
-          {this.state.audios.map(function(audio) {
-            return (
-              <option value={audio.identifier} key={audio.identifier}>
-                {audio.name}
-              </option>
-            );
-          })}
-        </select>
+          value={this.props.reciterList.reciterList.find(
+            element => element.value === this.props.audio.audio
+          )}
+        />
       </div>
     );
   }
@@ -53,7 +35,8 @@ class Reciter extends Component {
 
 const mapStatesToProps = state => {
   return {
-    audio: state.audio
+    audio: state.audio,
+    reciterList: state.reciterList
   };
 };
 

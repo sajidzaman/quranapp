@@ -56,13 +56,21 @@ class Player extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
-      this.setState({ audioFiles: null });
-      this.fetchAudios(nextProps);
+      if (this.props.audio.audio !== nextProps.audio.aduio) {
+        this.setState({ audioFiles: null });
+        this.fetchAudios(nextProps);
+      }
     }
   }
 
-  onMediaChangeHandler = info => {
-    console.log(info);
+  onMediaChangeHandler = event => {
+    let src = event.target.attributes["src"].value;
+    let splittedSrc = src.split("/");
+    console.log(splittedSrc[splittedSrc.length - 1]);
+    this.props.dispatch({
+      type: "AYAHTOHIGHLIGHT",
+      highlight: splittedSrc[splittedSrc.length - 1]
+    });
   };
 
   render() {
@@ -75,7 +83,7 @@ class Player extends Component {
           controls={["playpause", "forwardskip", "progressdisplay"]}
           autoplay={false}
           autoplayDelayInSeconds={2.1}
-          getDisplayText={this.onMediaChangeHandler}
+          onMediaEvent={{ play: this.onMediaChangeHandler }}
         />
       </div>
     );

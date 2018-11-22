@@ -12,43 +12,40 @@ class Verse extends Component {
     };
   }
   componentDidMount() {
+    //console.log("incdm", this.props.selectedSurah.selectedSurah);
     this.fetchSurah();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props !== nextProps) {
-      console.log("nextProps", nextProps.verseRange.verseRange[0] === 0);
-      if (nextProps.surah.surah !== this.props.surah.surah) {
-        this.setState({
-          verseOptions: null
-        });
-      }
+    //console.log("in willrecive props verse");
+    if (
+      this.props.selectedSurah.selectedSurah !==
+      nextProps.selectedSurah.selectedSurah
+    ) {
       this.fetchSurah(nextProps);
     }
   }
 
   fetchSurah(nextProps) {
-    let surah = this.props.surah.surah;
-    if (nextProps) surah = nextProps.surah.surah;
+    let selectedSurah = this.props.selectedSurah.selectedSurah;
+    if (nextProps) {
+      selectedSurah = nextProps.selectedSurah.selectedSurah;
+    }
 
-    fetch("http://api.alquran.cloud/surah/" + surah)
-      .then(response => response.json())
-      .then(parsedJSON => {
-        //console.log(parsedJSON.data);
-        const verseOptions = parsedJSON.data.ayahs.map(ayah => {
-          return {
-            value: ayah.numberInSurah,
-            label: ayah.numberInSurah
-          };
-        });
+    //console.log("array", Array(selectedSurah.numberOfAyahs).keys());
+    const totalAyahs = [...Array(selectedSurah.numberOfAyahs).keys()];
 
-        this.setState({
-          verseOptions: verseOptions
-        });
-      });
+    const verseOptions = totalAyahs.map(ayah => {
+      return { value: ayah + 1, label: ayah + 1 };
+    });
+    //console.log("verseOptions,", verseOptions);
+    this.setState({
+      verseOptions: verseOptions
+    });
   }
 
   onVerseFromChangeHandler = event => {
+    //console.log("in from change handler");
     let verseRange = this.state.verseOptions.length;
     if (this.state.verseRange[1] !== 0) {
       verseRange = this.state.verseRange[1];
@@ -63,16 +60,28 @@ class Verse extends Component {
   };
 
   onVerseToChangeHandler = event => {
+    //console.log(this.state.verseRange[0]);
+    //console.log("in to change handler");
     this.setState({
-      verseRange: [this.state.verseRange[0], event.value]
+      verseRange: [
+        this.state.verseRange[0] === 0 ? 1 : this.state.verseRange[0],
+        event.value
+      ]
     });
     this.props.dispatch({
       type: "AYAHRANGE",
-      verseRange: [this.state.verseRange[0], event.value]
+      verseRange: [
+        this.state.verseRange[0] === 0 ? 1 : this.state.verseRange[0],
+        event.value
+      ]
     });
   };
 
   render() {
+    if (!this.props.surahList.surahList)
+      return <ReactLoading color="green" type="spinningBubbles" />;
+    //console.log("slist", this.props.surahList.surahList);
+
     if (!this.state.verseOptions)
       return <ReactLoading type="bars" color="green" />;
     return (
@@ -84,7 +93,15 @@ class Verse extends Component {
               options={this.state.verseOptions}
               placeholder="From"
               onChange={this.onVerseFromChangeHandler}
-              defaultValue={this.state.verseOptions[0]}
+              value={
+                this.props.verseRange.verseRange[0] === 0
+                  ? this.state.verseOptions[0]
+                  : this.state.verseOptions.find(element => {
+                      return (
+                        element.value === this.props.verseRange.verseRange[0]
+                      );
+                    })
+              }
             />
           </div>
           <div className="col-md-6">
@@ -92,8 +109,14 @@ class Verse extends Component {
               options={this.state.verseOptions}
               placeholder="To"
               onChange={this.onVerseToChangeHandler}
-              defaultValue={
-                this.state.verseOptions[this.state.verseOptions.length - 1]
+              value={
+                this.props.verseRange.verseRange[1] === 0
+                  ? this.state.verseOptions[this.state.verseOptions.length - 1]
+                  : this.state.verseOptions.find(element => {
+                      return (
+                        element.value === this.props.verseRange.verseRange[1]
+                      );
+                    })
               }
             />
           </div>
@@ -103,9 +126,12 @@ class Verse extends Component {
   }
 }
 const mapStateToProps = state => {
+  //console.log("state in versejs", state);
   return {
+    surahList: state.surahList,
     surah: state.surah,
-    verseRange: state.verseRange
+    verseRange: state.verseRange,
+    selectedSurah: state.selectedSurah
   };
 };
 export default connect(mapStateToProps)(Verse);

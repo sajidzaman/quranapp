@@ -3,6 +3,7 @@ import ReactLoading from "react-loading";
 import { connect } from "react-redux";
 import Verse from "../../Quran/Verse/Verse";
 import Translation from "../../Quran/Translation/Translation";
+import Scrollbar from "react-scrollbars-custom";
 
 class TextDisplay extends Component {
   constructor(props) {
@@ -18,21 +19,33 @@ class TextDisplay extends Component {
   styles = {
     mainDiv: {
       height: window.innerHeight - 300 + "px",
-      direction: "rtl",
-      overflowY: "scroll",
-      border: 0
+      direction: "rtl"
     }
   };
 
   componentWillReceiveProps(nextProps) {
     // console.log(this.props !== nextProps);
     if (this.props !== nextProps) {
-      this.setState({
-        translation: null,
-        surah: null
-      });
-      this.fetchTranslation(nextProps);
-      this.fetchSurah(nextProps);
+      if (
+        this.props.translation.translation !== nextProps.translation.translation
+      ) {
+        this.setState({
+          translation: null
+        });
+        this.fetchTranslation(nextProps);
+      }
+
+      if (this.props.surah.surah !== nextProps.surah.surah) {
+        this.setState({
+          surah: null
+        });
+        this.fetchSurah(nextProps);
+      }
+    }
+    if (nextProps.highlight.highlight > this.props.highlight.highlight) {
+      let currentScroll = this._scrollBar.getScrollValues();
+      console.log(this._scrollBar.getScrollValues());
+      this._scrollBar.scrollTo(currentScroll.scrollTop + 120);
     }
   }
 
@@ -93,6 +106,10 @@ class TextDisplay extends Component {
         this.setState({
           surah: parsedJSON.data
         });
+        // this.props.dispatch({
+        //   type: "AYAHTOHIGHLIGHT",
+        //   highlight: parsedJSON.data.ayahs[0].number
+        // });
         //console.log("Surah", parsedJSON.data);
       })
       .catch(error => console.log("parsing failed", error));
@@ -104,7 +121,14 @@ class TextDisplay extends Component {
     if (!this.state.surah) return <ReactLoading color="green" type="cylon" />;
 
     return (
-      <div style={this.styles.mainDiv}>
+      <Scrollbar
+        style={this.styles.mainDiv}
+        rtl={true}
+        noScrollX={true}
+        ref={scrollBar => {
+          this._scrollBar = scrollBar;
+        }}
+      >
         {this.state.surah.ayahs.map(ayah => {
           return (
             <div key={"versecontainer_".concat(ayah.number)}>
@@ -126,7 +150,7 @@ class TextDisplay extends Component {
             </div>
           );
         })}
-      </div>
+      </Scrollbar>
     );
   }
 }
@@ -138,7 +162,8 @@ const mapStateToProps = state => {
     edition: state.edition,
     chapter: state.chapter,
     translation: state.translation,
-    verseRange: state.verseRange
+    verseRange: state.verseRange,
+    highlight: state.highlight
   };
 };
 export default connect(mapStateToProps)(TextDisplay);
