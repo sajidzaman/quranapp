@@ -8,7 +8,7 @@ import Scrollbar from "react-scrollbars-custom";
 class TextDisplay extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { searchResult: false };
   }
   componentDidMount() {
     this.fetchSurah();
@@ -24,6 +24,10 @@ class TextDisplay extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.searchText.searchText !== null) {
+      this.fetchSearchResults(this.props.searchText.searchText);
+    }
+
     console.log(this.props, nextProps);
     if (this.props !== nextProps) {
       if (this.props.edition.edition !== nextProps.edition.edition) {
@@ -82,6 +86,21 @@ class TextDisplay extends Component {
     }
   }
 
+  fetchSearchResults(searchText) {
+    this.setState({
+      searchResult: true
+    });
+    fetch("http://api.alquran.cloud/search/" + searchText + "/all/en")
+      .then(response => response.json())
+      .then(parsedJSON => {
+        console.log("searchResults", parsedJSON.data);
+
+        this.setState({
+          searchResults: parsedJSON.data
+        });
+      })
+      .catch(error => console.log(error, "Error occured"));
+  }
   //TODO: fetch Translation again on verse Range selection
   fetchTranslation(nextProps) {
     console.log("nextProps in fetchTranslation", nextProps);
@@ -171,6 +190,28 @@ class TextDisplay extends Component {
     //console.log("text Display props", this.props);
     //console.log("translation state", this.state.translation);
     if (!this.state.surah) return <ReactLoading color="green" type="cylon" />;
+    if (this.state.searchResult) {
+      if (!this.state.searchResults) {
+        return <ReactLoading color="green" type="cylon" />;
+      } else {
+        return (
+          <Scrollbar
+            style={this.styles.mainDiv}
+            rtl={true}
+            noScrollX={true}
+            scrollTop={0}
+            ref={scrollBar => {
+              this._scrollBar = scrollBar;
+            }}
+          >
+            <div> Total Results Found: {this.state.searchResults.count}</div>
+            {this.state.searchResults.matches.map(match => {
+              return <div>{match.text}</div>;
+            })}
+          </Scrollbar>
+        );
+      }
+    }
 
     return (
       <Scrollbar
@@ -215,7 +256,8 @@ const mapStateToProps = state => {
     chapter: state.chapter,
     translation: state.translation,
     verseRange: state.verseRange,
-    highlight: state.highlight
+    highlight: state.highlight,
+    searchText: state.searchText
   };
 };
 export default connect(mapStateToProps)(TextDisplay);

@@ -11,6 +11,7 @@ import TranslationListReducer from "./reducers/TranslationListReducer";
 import EditionListReducer from "./reducers/EditionListReducer";
 import ReciterListReducer from "./reducers/ReciterListReducer";
 import SelectedSurahReducer from "./reducers/SelectedSurahReducer";
+import SearchReducer from "./reducers/SearchReducer";
 
 const rootReducer = combineReducers({
   surahList: SurahListReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   editionList: EditionListReducer,
   reciterList: ReciterListReducer,
   selectedSurah: SelectedSurahReducer,
+  searchText: SearchReducer,
   chapter: ChapterReducer,
   edition: EditionReducer,
   surah: SurahReducer,

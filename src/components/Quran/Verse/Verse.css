@@ -1,3 +1,6 @@
+.Verse {
+  position: relative;
+}
 .Verse.heading {
   direction: rtl;
   font-family: "Scheherazade";
@@ -40,4 +43,19 @@
 }
 .Verse .highlight {
   background: #edf4f9;
+}
+.Verse .wordbywordContainer {
+  display: flex;
+  justify-content: right;
+  flex-flow: row wrap;
+}
+.Verse .ayahWord {
+  padding: 10px;
+  margin: 5px;
+  background: #b7d8ef;
+}
+.Verse .wordbywordContainer + .ayahContainer {
+  position: absolute;
+  left: 10px;
+  top: 30%;
 }

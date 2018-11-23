@@ -1,0 +1,8 @@
+.Search {
+  margin-top: 50px;
+  display: flex;
+}
+.Search input {
+  width: 80%;
+  margin-right: 20px;
+}
