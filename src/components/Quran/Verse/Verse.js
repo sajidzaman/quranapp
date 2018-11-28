@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import "./Verse.css";
 import { connect } from "react-redux";
+import processString from "react-process-string";
+import ReactHintFactory from "react-hint";
+import "react-hint/css/index.css";
+
+const ReactHint = ReactHintFactory(React);
+
 class Verse extends Component {
   constructor(props) {
     super(props);
@@ -48,6 +54,26 @@ class Verse extends Component {
   };
   render() {
     let ayah = null;
+    let tajweedRules = [
+      {
+        identifier: "h",
+        color: "#AAAAAA",
+        type: "hamza-wasl",
+        description: "Hamzat ul Wasl"
+      },
+      {
+        identifier: "s",
+        color: "#AAAAAA",
+        type: "silent",
+        description: "Silent"
+      },
+      {
+        identifier: "l",
+        color: "#AAAAAA",
+        type: "laam-shamsiyah",
+        description: "Lam Shamsiyyah"
+      }
+    ];
     if (this.props.edition.edition === "quran-wordbyword") {
       let ayahText = [];
       let splittedAyah = this.props.ayah.text.split("$");
@@ -68,18 +94,48 @@ class Verse extends Component {
         </div>
       );
       //ayah = ayahText.join();
+    } else if (this.props.edition.edition === "quran-tajweed") {
+      ayah = this.props.ayah.text;
+      let config = [
+        {
+          regex: /\[(\w+)[^\[]*\[(.*?)\]/g,
+          fn: (key, result) => {
+            let rule = tajweedRules.filter(
+              elem => elem.identifier === result[1]
+            );
+            return (
+              <span>
+                <span
+                  className={result[1]}
+                  data-rh={
+                    rule.length > 0
+                      ? rule[0].description
+                      : "Description not found"
+                  }
+                  data-rh-at="top"
+                >
+                  {result[2]}
+                </span>
+              </span>
+            );
+          }
+        }
+      ];
+      ayah = processString(config)(ayah);
     } else {
       ayah = this.props.ayah.text;
     }
     return (
       <div className="Verse text-right heading">
+        <ReactHint events delay={100} />
         <div
           key={this.props.ayah.number}
           className="text-right ayah"
           id={"ayah_".concat(this.props.ayah.number)}
         >
           {this.props.surah !== 1 &&
-          this.props.edition.edition !== "quran-wordbyword"
+          (this.props.edition.edition !== "quran-wordbyword" &&
+            this.props.edition.edition !== "quran-tajweed")
             ? ayah
                 .replace("بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "")
                 .replace("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", "")

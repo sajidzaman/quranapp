@@ -59,3 +59,63 @@
   left: 10px;
   top: 30%;
 }
+
+.Verse span.h,
+.Verse span.s,
+.Verse span.l {
+  color: #aaaaaa;
+}
+.Verse span.n {
+  color: #537fff;
+}
+
+.Verse span.p {
+  color: #4050ff;
+}
+
+.Verse span.q {
+  color: #dd0008;
+}
+
+.Verse span.o {
+  color: #2144c1;
+}
+
+.Verse span.c {
+  color: #d500b7;
+}
+.Verse span.f {
+  color: #9400a8;
+}
+
+.Verse span.w {
+  color: #58b800;
+}
+
+.Verse span.i {
+  color: #26bffd;
+}
+
+.Verse span.a {
+  color: #169200;
+}
+
+.Verse span.u {
+  color: #169200;
+}
+
+.Verse span.d {
+  color: #a1a1a1;
+}
+
+.Verse span.b {
+  color: #a1a1a1;
+}
+
+.Verse span.g {
+  color: #ff7e1e;
+}
+
+.Verse .ayah span div {
+  display: inline;
+}
