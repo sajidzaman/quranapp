@@ -57,21 +57,67 @@ class Verse extends Component {
     let tajweedRules = [
       {
         identifier: "h",
-        color: "#AAAAAA",
-        type: "hamza-wasl",
         description: "Hamzat ul Wasl"
       },
       {
         identifier: "s",
-        color: "#AAAAAA",
-        type: "silent",
         description: "Silent"
       },
       {
         identifier: "l",
-        color: "#AAAAAA",
-        type: "laam-shamsiyah",
         description: "Lam Shamsiyyah"
+      },
+      {
+        identifier: "n",
+        description: "Normal Prolongation: 2 Vowels"
+      },
+      {
+        identifier: "p",
+        description: "Permissible Prolongation: 2, 4, 6 Vowels"
+      },
+      {
+        identifier: "q",
+        description: "Qalaqah"
+      },
+      {
+        identifier: "o",
+        description: "Obligatory Prolongation: 4-5 Vowels"
+      },
+      {
+        identifier: "c",
+        description: "Ikhafa' Shafawi - With Meem"
+      },
+      {
+        identifier: "f",
+        description: "Ikhafa'"
+      },
+      {
+        identifier: "w",
+        description: "Idgham Shafawi - With Meem"
+      },
+      {
+        identifier: "i",
+        description: "Iqlab"
+      },
+      {
+        identifier: "a",
+        description: "Idgham - With Ghunnah"
+      },
+      {
+        identifier: "u",
+        description: "Idgham - Without Ghunnah"
+      },
+      {
+        identifier: "d",
+        description: "Idgham - Mutajanisayn"
+      },
+      {
+        identifier: "b",
+        description: "Idgham - Mutaqaribayn"
+      },
+      {
+        identifier: "g",
+        description: "Ghunnah: 2 Vowels"
       }
     ];
     if (this.props.edition.edition === "quran-wordbyword") {

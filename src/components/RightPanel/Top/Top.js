@@ -11,7 +11,7 @@ class Top extends Component {
     this.fetchSurah();
   }
   componentWillReceiveProps(nextProps) {
-    if (this.props !== nextProps) {
+    if (this.props.surah.surah !== nextProps.surah.surah) {
       this.setState({
         surah: null
       });

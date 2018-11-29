@@ -64,58 +64,72 @@
 .Verse span.s,
 .Verse span.l {
   color: #aaaaaa;
+  cursor: pointer;
 }
 .Verse span.n {
   color: #537fff;
+  cursor: pointer;
 }
 
 .Verse span.p {
   color: #4050ff;
+  cursor: pointer;
 }
 
 .Verse span.q {
   color: #dd0008;
+  cursor: pointer;
 }
 
 .Verse span.o {
   color: #2144c1;
+  cursor: pointer;
 }
 
 .Verse span.c {
   color: #d500b7;
+  cursor: pointer;
 }
 .Verse span.f {
   color: #9400a8;
+  cursor: pointer;
 }
 
 .Verse span.w {
   color: #58b800;
+  cursor: pointer;
 }
 
 .Verse span.i {
   color: #26bffd;
+  cursor: pointer;
 }
 
 .Verse span.a {
   color: #169200;
+  cursor: pointer;
 }
 
 .Verse span.u {
   color: #169200;
+  cursor: pointer;
 }
 
 .Verse span.d {
   color: #a1a1a1;
+  cursor: pointer;
 }
 
 .Verse span.b {
   color: #a1a1a1;
+  cursor: pointer;
 }
 
 .Verse span.g {
   color: #ff7e1e;
+  cursor: pointer;
 }
 
 .Verse .ayah span div {
-  display: inline;
+  /* display: inline; */
 }
