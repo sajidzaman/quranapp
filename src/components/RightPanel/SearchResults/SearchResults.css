@@ -1,0 +1,16 @@
+.SearchResults .top {
+  height: 100px;
+}
+
+.SearchResults .top h3 {
+  line-height: 80px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-size: 35px;
+  color: green;
+}
+.SearchResults .searchResults .result {
+  background: #e2e2e2;
+  padding: 20px;
+  margin-top: 20px;
+}

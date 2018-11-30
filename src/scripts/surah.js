@@ -1,4 +1,5 @@
 export const fetchSurah = async (props, nextProps) => {
+  console.log("props in fetchsurah", props);
   let edition = props.edition.edition;
   let surah = props.surah.surah;
   let verseRange = props.verseRange.verseRange;

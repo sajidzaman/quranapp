@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Chapter from "./Chapter/Chapter";
+//import Chapter from "./Chapter/Chapter";
 import Surah from "./Surah/Surah";
 import Verse from "./Verse/Verse";
 import Reciter from "./Reciter/Reciter";

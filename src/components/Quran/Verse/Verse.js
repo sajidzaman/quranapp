@@ -132,8 +132,9 @@ class Verse extends Component {
             </div>
           );
         }
+        return null;
       });
-      console.log(ayahText);
+      // console.log(ayahText);
       ayah = (
         <div className="wordbywordContainer">
           {this.jsxJoin(ayahText, <span />)}
@@ -144,13 +145,13 @@ class Verse extends Component {
       ayah = this.props.ayah.text;
       let config = [
         {
-          regex: /\[(\w+)[^\[]*\[(.*?)\]/g,
+          regex: /\[(\w+)[^[]*\[(.*?)\]/g,
           fn: (key, result) => {
             let rule = tajweedRules.filter(
               elem => elem.identifier === result[1]
             );
             return (
-              <span>
+              <span key={key}>
                 <span
                   className={result[1]}
                   data-rh={

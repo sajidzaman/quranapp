@@ -2,71 +2,47 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import AudioPlayer from "react-responsive-audio-player";
 import ReactLoading from "react-loading";
+import { fetchAudios } from "../../../scripts/audios";
 import "../../../../node_modules/react-responsive-audio-player/dist/audioplayer.css";
-//WARNING! To be deprecated in React v17. Use new lifecycle static getDerivedStateFromProps instead.
-//TODO: load the audios based on the selection
-//fetch the audios
-//play the audio files
 
 class Player extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { surah: props.surah.surah };
   }
+  fetchAudios = nextProps => {
+    fetchAudios(this.props, nextProps).then(audioFiles => {
+      this.setState({
+        audioFiles: audioFiles
+      });
+    });
+  };
   componentDidMount() {
     this.fetchAudios();
   }
-  fetchAudios(nextProps) {
-    let audio = this.props.audio.audio,
-      surah = this.props.surah.surah,
-      verseRange = this.props.verseRange.verseRange;
-    if (nextProps) {
-      audio = nextProps.audio.audio;
-      surah = nextProps.surah.surah;
-      verseRange = nextProps.verseRange.verseRange;
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.surah.surah !== state.surah) {
+      return { surah: props.surah.surah, audioFiles: null };
     }
-
-    let urlForAudio = "http://api.alquran.cloud/surah/" + surah + "/" + audio;
-
-    if (verseRange[0] !== 0 && verseRange[1] !== 0) {
-      let offset = "?offset=".concat(verseRange[0] - 1);
-      let limit = "&limit=".concat(verseRange[1] - (verseRange[0] - 1));
-      urlForAudio = urlForAudio.concat([offset + limit]);
-    }
-
-    fetch(urlForAudio)
-      .then(response => response.json())
-      .then(parsedJSON => {
-        const audios = parsedJSON.data.ayahs.map(ayah => {
-          return {
-            url: ayah.audio,
-            title:
-              parsedJSON.data.englishName +
-              " [ Ayah " +
-              ayah.numberInSurah +
-              "]",
-            ayah: ayah.numberInSurah
-          };
-        });
-        console.log(audios);
-        this.setState({
-          audioFiles: audios
-        });
-      });
+    return null;
   }
-  componentWillReceiveProps(nextProps) {
-    if (this.props !== nextProps) {
-      if (this.props.audio.audio !== nextProps.audio.aduio) {
-        this.setState({ audioFiles: null });
-        this.fetchAudios(nextProps);
-      }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.surah.surah !== this.props.surah.surah) {
+      this.fetchAudios(this.props);
+    }
+    if (prevProps.audio.audio !== this.props.audio.audio) {
+      this.setState({
+        audioFiles: null
+      });
+      this.fetchAudios(this.props);
     }
   }
 
   onMediaChangeHandler = event => {
     let src = event.target.attributes["src"].value;
     let splittedSrc = src.split("/");
-    console.log(splittedSrc[splittedSrc.length - 1]);
     this.props.dispatch({
       type: "AYAHTOHIGHLIGHT",
       highlight: splittedSrc[splittedSrc.length - 1]

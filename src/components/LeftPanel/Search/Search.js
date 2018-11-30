@@ -15,6 +15,9 @@ class Search extends Component {
   handleSubmit = event => {
     this.props.dispatch({ type: "SEARCH", searchText: this.state.search });
   };
+  handleReset = event => {
+    this.props.dispatch({ type: "SEARCH", searchText: null });
+  };
 
   render() {
     return (
@@ -31,6 +34,13 @@ class Search extends Component {
           onClick={this.handleSubmit}
         >
           Search
+        </button>
+        <button
+          type="submit"
+          className="btn btn-danger"
+          onClick={this.handleReset}
+        >
+          Reset
         </button>
       </div>
     );

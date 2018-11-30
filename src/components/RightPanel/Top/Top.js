@@ -1,21 +1,36 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import ReactLoading from "react-loading";
+import { fetchSurah } from "../../../scripts/surah";
 
 class Top extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  fetchSurah = nextProps => {
+    fetchSurah(this.props, nextProps)
+      .then(surah => {
+        this.setState({
+          surah: surah
+        });
+      })
+      .catch(error => {
+        console.log("error in topjs call", error);
+      });
+  };
+
   componentDidMount() {
     this.fetchSurah();
   }
-  componentWillReceiveProps(nextProps) {
+
+  componentDidUpdate(nextProps) {
     if (this.props.surah.surah !== nextProps.surah.surah) {
       this.setState({
         surah: null
       });
-      this.fetchSurah(nextProps);
+      this.fetchSurah(this.props);
     }
   }
   styles = {
@@ -32,25 +47,7 @@ class Top extends Component {
       color: "green"
     }
   };
-  fetchSurah(nextProps) {
-    let edition = this.props.edition.edition,
-      surah = this.props.surah.surah;
 
-    if (nextProps) {
-      edition = nextProps.edition.edition;
-      surah = nextProps.surah.surah;
-    }
-
-    fetch("http://api.alquran.cloud/surah/" + surah + "/" + edition)
-      .then(response => response.json())
-      .then(parsedJSON => {
-        this.setState({
-          surah: parsedJSON.data
-        });
-        //console.log(parsedJSON.data);
-      })
-      .catch(error => console.log("parsing failed", error));
-  }
   render() {
     if (!this.state.surah) return <ReactLoading color="green" type="cylon" />;
     //console.log(this.state.surah.name);
@@ -86,7 +83,8 @@ const mapStatesToProps = state => {
     surah: state.surah,
     edition: state.edition,
     chapter: state.chapter,
-    translation: state.translation
+    translation: state.translation,
+    verseRange: state.verseRange
   };
 };
 
