@@ -1,4 +1,8 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This Project uses alquran.cloud api.
+
+##Online Demo
+Online Demo is available here on my personal website - [Quran App](http://sajidzaman.com).
 
 ## Available Scripts
 
